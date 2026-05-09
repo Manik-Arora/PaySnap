@@ -140,12 +140,13 @@ userRouter.put("/", authMiddleware, async function (req, res) {
   res.json({ message: "Updated successfully" });
 });
 
-userRouter.get("/bulk", async function (req, res) {
+userRouter.get("/bulk", authMiddleware, async function (req, res) {
   const filter = req.query.filter || "";
   console.log(filter);
 
   try {
-    const users = await User.find({
+    users = await User.find({
+      _id: { $ne: req.userId },
       $or: [
         { firstName: { $regex: filter, $options: "i" } },
         { lastName: { $regex: filter, $options: "i" } },
